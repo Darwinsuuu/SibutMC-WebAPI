@@ -3,7 +3,8 @@ const models = require('../models')
 const axios = require('axios');
 require('dotenv').config();
 
-// setting SMS send function
+
+// setting global SMS send function
 async function sendSMS(phoneNumber, message) {
 
     const payload = {
@@ -33,10 +34,10 @@ async function sendSMS(phoneNumber, message) {
 }
 
 
-
+// creation of account OTP
 function sendOTPCreateAccount(req, res) {
     const phoneNumber = req.body.contact_no; // Replace with the recipient's phone number
-    const message = req.body.message; // Replace with your message
+    const message = "Good day! Your OTP is " +req.body.otp+ ". This is valid for 15 mins. Thank you!"; // Replace with your message
 
     sendSMS(phoneNumber, message)
         .then(() => {

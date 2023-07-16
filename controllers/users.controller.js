@@ -53,7 +53,7 @@ function createPatient(req, res) {
             // successful creation of account
             res.status(201).json({
                 success: true,
-                message: "Patient account and data successfully added!",
+                message: "Account successfully added!",
             });
 
             transaction.commit();   /* commit all query made */
