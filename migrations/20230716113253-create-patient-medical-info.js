@@ -22,11 +22,11 @@ module.exports = {
         allowNull: true,
       },
       height: {
-        type: Sequelize.FLOAT(2,2),
+        type: Sequelize.FLOAT(10,2),
         allowNull: true,
       },
       weight: {
-        type: Sequelize.FLOAT(2,2),
+        type: Sequelize.FLOAT(10,2),
         allowNull: true,
       },
       blood_pressure: {

@@ -1,9 +1,6 @@
 const { Sequelize, QueryTypes } = require('sequelize');
 const models = require('../models')
 
-const url = require('url');
-const { userInfo } = require('os');
-
 // creating patient accounts using transactions
 function createPatient(req, res) {
 
@@ -100,14 +97,12 @@ function createPatient(req, res) {
 }
 
 
-
-
 async function getPatientInformation(req, res) {
 
     try {
         const userId = req.params.id;
 
-        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id WHERE PA.user_id = '"+userId+"'", { type: QueryTypes.SELECT });
+        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id WHERE PA.user_id = '" + userId + "'", { type: QueryTypes.SELECT });
 
         if (result.length > 0) {
 
@@ -159,7 +154,7 @@ async function getPatientInformation(req, res) {
         } else {
             res.status(200).json({
                 success: false,
-                message: "No record found for " +userId+ ". Please login again.",
+                message: "No record found for " + userId + ". Please login again.",
                 result: result
             });
         }
@@ -175,7 +170,6 @@ async function getPatientInformation(req, res) {
 }
 
 
-
 async function updatePersonalInformation(req, res) {
 
     try {
@@ -188,27 +182,27 @@ async function updatePersonalInformation(req, res) {
             birthdate: req.body.birthdate,
             marital_status: req.body.marital_status,
         }
-    
-        await models.sequelize.query("UPDATE patient_personal_infos SET firstname='"+personalInfo.firstname+"', middlename='"+personalInfo.middlename+"', lastname='"+personalInfo.lastname+"', gender='"+personalInfo.gender+"', birthdate='"+personalInfo.birthdate+"', marital_status='"+personalInfo.marital_status+"' WHERE user_id='"+personalInfo.user_id+"'", { type: QueryTypes.UPDATE} )
+
+        await models.sequelize.query("UPDATE patient_personal_infos SET firstname='" + personalInfo.firstname + "', middlename='" + personalInfo.middlename + "', lastname='" + personalInfo.lastname + "', gender='" + personalInfo.gender + "', birthdate='" + personalInfo.birthdate + "', marital_status='" + personalInfo.marital_status + "' WHERE user_id='" + personalInfo.user_id + "'", { type: QueryTypes.UPDATE })
 
         res.status(200).json({
             success: true,
             message: "Personal information was updated successfully."
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
             error: error.message,
         });
     }
-    
+
 }
 
 
 async function updateAccountInformation(req, res) {
-    
+
     try {
 
         const accountInfo = {
@@ -217,14 +211,14 @@ async function updateAccountInformation(req, res) {
             password: req.body.password
         }
 
-        await models.sequelize.query("UPDATE patient_accounts SET username = '"+accountInfo.username+"', password='"+accountInfo.password+"' WHERE user_id='"+accountInfo.user_id+"'", { type: QueryTypes.UPDATE })
+        await models.sequelize.query("UPDATE patient_accounts SET username = '" + accountInfo.username + "', password='" + accountInfo.password + "' WHERE user_id='" + accountInfo.user_id + "'", { type: QueryTypes.UPDATE })
 
         res.status(200).json({
             success: true,
             message: "Account information was updated successfully."
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
@@ -246,14 +240,14 @@ async function updateContactInformation(req, res) {
             address: req.body.address,
         }
 
-        await models.sequelize.query("UPDATE patient_personal_infos SET contact_no = '"+contactInfo.contact_no+"', email='"+contactInfo.email+"', address='"+contactInfo.address+"' WHERE user_id='"+contactInfo.user_id+"'", {type: QueryTypes.UPDATE })
+        await models.sequelize.query("UPDATE patient_personal_infos SET contact_no = '" + contactInfo.contact_no + "', email='" + contactInfo.email + "', address='" + contactInfo.address + "' WHERE user_id='" + contactInfo.user_id + "'", { type: QueryTypes.UPDATE })
 
         res.status(200).json({
             success: true,
             message: "Contact information was updated successfully."
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
@@ -264,30 +258,64 @@ async function updateContactInformation(req, res) {
 }
 
 
-
 async function updateEmegencyContactInformation(req, res) {
     try {
-         
+
         const emegencyContactInfo = {
             user_id: req.body.user_id,
             fullname: req.body.fullname,
             emergency_contact_no: req.body.emergency_contact_no,
         }
 
-        await models.sequelize.query("UPDATE patient_emergency_contact_infos SET contacT_fullname='"+emegencyContactInfo.fullname+"', contact_no='"+emegencyContactInfo.emergency_contact_no+"' WHERE user_id='"+emegencyContactInfo.user_id+"'", { type: QueryTypes.UPDATE })
+        await models.sequelize.query("UPDATE patient_emergency_contact_infos SET contacT_fullname='" + emegencyContactInfo.fullname + "', contact_no='" + emegencyContactInfo.emergency_contact_no + "' WHERE user_id='" + emegencyContactInfo.user_id + "'", { type: QueryTypes.UPDATE })
 
         res.status(200).json({
             success: true,
             message: "Emergency contact information was updated successfully."
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
             error: error.message
         })
     }
+}
+
+
+async function updateMedicalInformation(req, res) {
+
+    try {
+
+        const medicalInfo = {
+            user_id: req.body.user_id,
+            height: parseFloat(req.body.height).toFixed(2),
+            weight: parseFloat(req.body.weight).toFixed(2),
+            blood_type: req.body.blood_type,
+            blood_pressure: req.body.blood_pressure,
+            disability: req.body.disability || '',
+            contagious_disease: req.body.contigious_disease || '',
+        }
+
+        console.log(req.body);
+        console.log(medicalInfo);
+
+        await models.sequelize.query("UPDATE patient_medical_infos SET height='" + medicalInfo.height + "', weight='" + medicalInfo.weight + "', blood_type='" + medicalInfo.blood_type + "', blood_pressure='" + medicalInfo.blood_pressure + "', disability='" + medicalInfo.disability + "', contagious_disease='" + medicalInfo.contagious_disease + "' WHERE user_id = '" + medicalInfo.user_id + "'", { type: QueryTypes.UPDATE })
+
+        res.status(200).json({
+            success: true,
+            message: "Medical information was updated successfully."
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong.",
+            error: error.message
+        })
+    }
+
 }
 
 module.exports = {
@@ -296,5 +324,6 @@ module.exports = {
     updatePersonalInformation: updatePersonalInformation,
     updateAccountInformation: updateAccountInformation,
     updateContactInformation: updateContactInformation,
-    updateEmegencyContactInformation: updateEmegencyContactInformation
+    updateEmegencyContactInformation: updateEmegencyContactInformation,
+    updateMedicalInformation: updateMedicalInformation
 }

@@ -8,6 +8,7 @@ router.put("/updatePersonalInfo", usersController.updatePersonalInformation);
 router.put("/updateAccountInfo", usersController.updateAccountInformation);
 router.put("/updateContactInfo", usersController.updateContactInformation);
 router.put("/updateEmegencyContactInfo", usersController.updateEmegencyContactInformation);
+router.put("/updateMedicalInfo", usersController.updateMedicalInformation);
 router.get("/getPatientInfo/:id", usersController.getPatientInformation);
 
 module.exports = router;
