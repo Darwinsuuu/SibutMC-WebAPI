@@ -4,8 +4,9 @@ const cors = require('cors');
 
 const app = express();
 
-const userRoute = require('./routes/users');
+const patientRoute = require('./routes/users');
 const semaphoreRoute = require('./routes/semaphore');
+const authRoute = require('./routes/auth');
 
 app.use(cors({
     origin: '*',
@@ -14,7 +15,8 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-app.use('/api/patient', userRoute);
+app.use('/api/patient', patientRoute);
 app.use('/api/semaphore', semaphoreRoute);
+app.use('/api/auth', authRoute);
 
 module.exports = app;

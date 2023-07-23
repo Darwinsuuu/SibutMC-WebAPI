@@ -28,19 +28,19 @@ module.exports = (sequelize, DataTypes) => {
     },
     height: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
     },
     weight: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
     },
     blood_pressure: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     blood_type: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   }, {
     sequelize,

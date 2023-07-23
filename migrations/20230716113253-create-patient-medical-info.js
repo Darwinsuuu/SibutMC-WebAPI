@@ -23,19 +23,19 @@ module.exports = {
       },
       height: {
         type: Sequelize.FLOAT(2,2),
-        allowNull: false,
+        allowNull: true,
       },
       weight: {
         type: Sequelize.FLOAT(2,2),
-        allowNull: false,
+        allowNull: true,
       },
       blood_pressure: {
         type: Sequelize.STRING(10),
-        allowNull: false,
+        allowNull: true,
       },
       blood_type: {
         type: Sequelize.STRING(10),
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
