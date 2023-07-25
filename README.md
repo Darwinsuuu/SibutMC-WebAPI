@@ -8,7 +8,8 @@
 - While downloading/installing dependencies, download XAMPP <a href="https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.0.28/xampp-windows-x64-8.0.28-0-VS16-installer.exe" target="_blank">here</a>
 - After install XAMPP and start 'Apache' & 'MySQL' in XAMPP Control Panel
 - Click Admin in MySQL in Control Panel and create database named 'sibutmc_db'
-- Go back to Visual Studio Code and enter 'sequelize db:migrate'
+- Go back to Visual Studio Code and enter 'npm install -g sequelize-cli'
+- After installing sequelize-cli, run 'sequelize db:migrate'
 - Lastly, type "npm start" in your terminal
   
 
