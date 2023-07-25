@@ -3,7 +3,6 @@ const models = require('../models')
 const axios = require('axios');
 require('dotenv').config();
 
-
 // setting global SMS send function
 async function sendSMS(phoneNumber, message) {
 

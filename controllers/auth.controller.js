@@ -1,5 +1,9 @@
 const { Sequelize, QueryTypes } = require('sequelize');
 const models = require('../models')
+const bycryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 
 async function userAuthPatient(req, res) {
     const credentials = {
@@ -9,36 +13,61 @@ async function userAuthPatient(req, res) {
 
     try {
 
-        const result = await models.sequelize.query("SELECT * FROM patient_accounts", { type: QueryTypes.SELECT });
-        if (result.length > 0) {
-            
-            const login = result.some(element => {
-                if (element.username === credentials.username && element.password === credentials.password) {
+        models.patient_account.findOne({ where: { username: credentials.username } }).then(user => {
 
-                    res.status(201).json({
-                        success: true,
-                        message: "Logged in successfully.",
-                        userId: element.user_id
-                    });
+            if (user === null) {
+                res.status(401).json({
+                    success: true,
+                    message: "Invalid credentials!"
+                });
 
-                    return true;
-                }
-            });
+            } else {
 
-            if(!login) {
-                res.status(201).json({
-                    success: false,
-                    message: "Invalid username or password.",
+                bycryptjs.compare(credentials.password, user.password, function (err, result) {
+                    if (result) {
+                        jwt.sign(
+                            {
+                                userId: user.user_id,
+                                username: user.username,
+                                fullname: user.firstname + " " + user.middlename + " " + user.lastname,
+                            },
+                            process.env.JWT_SECRET_KEY,
+                            function (err, token) {
+                                if (err) {
+                                    console.error("Error generating JWT:", err);
+                                    res.status(500).json({
+                                        success: false,
+                                        message: "Error generating JWT token"
+                                    });
+                                } else {
+                                    
+                                    console.log("Generated Token:", token);
+                                    res.status(200).json({
+                                        success: true,
+                                        message: "Authentication successful!",
+                                        userId: user.user_id,
+                                        userType: 3,
+                                        token: token
+                                    });
+                                }
+                            }
+                        );
+                    } else {
+                        res.status(401).json({
+                            success: false,
+                            message: "Invalid credentials"
+                        });
+                    }
                 });
             }
 
-        } else {
-            res.status(201).json({
-                success: true,
-                message: "Logged in successfully.",
-                userId: element.userId
+        }).catch(error => {
+            res.status(500).json({
+                success: false,
+                message: "Something went wrong.",
+                error: error.message,
             });
-        }
+        });
 
     } catch (error) {
         res.status(500).json({

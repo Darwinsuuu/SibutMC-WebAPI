@@ -1,90 +1,96 @@
 const { Sequelize, QueryTypes } = require('sequelize');
 const models = require('../models')
+const bycryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // creating patient accounts using transactions
 function createPatient(req, res) {
 
     try {
+        bycryptjs.genSalt(10, function (err, salt) {
+            bycryptjs.hash(req.body.accountInfo.password, salt, function (err, hash) {
+                // account details from request body
+                const accountData = {
+                    username: req.body.accountInfo.username,
+                    password: hash,
+                };
 
-        // account details from request body
-        const accountData = {
-            username: req.body.accountInfo.username,
-            password: req.body.accountInfo.password,
-        };
+                // patients information from request body
+                const personalInfo = {
+                    firstname: req.body.personalInfo.firstname,
+                    user_id: null,
+                    middlename: req.body.personalInfo.middlename,
+                    lastname: req.body.personalInfo.lastname,
+                    gender: req.body.personalInfo.gender,
+                    birthdate: req.body.personalInfo.birthdate,
+                    marital_status: req.body.personalInfo.marital_status,
+                    contact_no: req.body.contactInfo.contact_no,
+                    email: req.body.contactInfo.email,
+                    address: req.body.contactInfo.address,
+                };
 
-        // patients information from request body
-        const personalInfo = {
-            firstname: req.body.personalInfo.firstname,
-            user_id: null,
-            middlename: req.body.personalInfo.middlename,
-            lastname: req.body.personalInfo.lastname,
-            gender: req.body.personalInfo.gender,
-            birthdate: req.body.personalInfo.birthdate,
-            marital_status: req.body.personalInfo.marital_status,
-            contact_no: req.body.contactInfo.contact_no,
-            email: req.body.contactInfo.email,
-            address: req.body.contactInfo.address,
-        };
-
-        // patient emergency contact info from request body
-        const emergencyContactInfo = {
-            user_id: null,
-            contact_fullname: req.body.emergencyContactInfo.fullname,
-            contact_no: req.body.emergencyContactInfo.emergency_contact_no
-        }
-
-        const medicalInfo = {
-            user_id: null,
-            disability: "",
-            contagious_disease: "",
-            height: 0.0,
-            weight: 0.0,
-            blood_pressure: "",
-            blood_type: "",
-        }
-
-        let transaction;
-
-        // creating transaction
-        models.sequelize
-            .transaction()
-            .then((t) => {
-                transaction = t;
-                return models.patient_account.create(accountData, { transaction });         /* create new patient account from model and pass account data files */
-            })
-            .then((createdAccount) => {
-                personalInfo.user_id = createdAccount.user_id   /* gets user id from return value and store to personalInfo.user_id */
-                return models.patient_personal_info.create(personalInfo, { transaction }); /* create new patient personal info from model and pass personal info data */
-            }).then((createdEmergencyContact) => {
-                emergencyContactInfo.user_id = createdEmergencyContact.user_id  /* gets user id from return value and store to emergencyContactInfo.user_id */
-                return models.patient_emergency_contact_info.create(emergencyContactInfo, { transaction }); /* create new patient emergency contact info from model and pass emergency contact data */
-            }).then((patientEmergencyContactInfo) => {
-                medicalInfo.user_id = patientEmergencyContactInfo.user_id
-                return models.patient_medical_info.create(medicalInfo, { transaction });
-            })
-            .then((result) => {
-
-                // successful creation of account
-                res.status(201).json({
-                    success: true,
-                    message: "Account successfully added!",
-                });
-
-                transaction.commit();   /* commit all query made */
-            })
-            .catch((error) => {
-                // checks if transaction was initialized
-                if (transaction) {
-                    transaction.rollback(); /* rollback and return data that was submitted to database */
+                // patient emergency contact info from request body
+                const emergencyContactInfo = {
+                    user_id: null,
+                    contact_fullname: req.body.emergencyContactInfo.fullname,
+                    contact_no: req.body.emergencyContactInfo.emergency_contact_no
                 }
 
-                // unsuccessfully create account
-                res.status(500).json({
-                    success: false,
-                    message: "Something went wrong.",
-                    error: error.message,
-                });
-            });
+                const medicalInfo = {
+                    user_id: null,
+                    disability: "",
+                    contagious_disease: "",
+                    height: 0.0,
+                    weight: 0.0,
+                    blood_pressure: "",
+                    blood_type: "",
+                }
+
+                let transaction;
+
+                // creating transaction
+                models.sequelize
+                    .transaction()
+                    .then((t) => {
+                        transaction = t;
+                        return models.patient_account.create(accountData, { transaction });         /* create new patient account from model and pass account data files */
+                    })
+                    .then((createdAccount) => {
+                        personalInfo.user_id = createdAccount.user_id   /* gets user id from return value and store to personalInfo.user_id */
+                        return models.patient_personal_info.create(personalInfo, { transaction }); /* create new patient personal info from model and pass personal info data */
+                    }).then((createdEmergencyContact) => {
+                        emergencyContactInfo.user_id = createdEmergencyContact.user_id  /* gets user id from return value and store to emergencyContactInfo.user_id */
+                        return models.patient_emergency_contact_info.create(emergencyContactInfo, { transaction }); /* create new patient emergency contact info from model and pass emergency contact data */
+                    }).then((patientEmergencyContactInfo) => {
+                        medicalInfo.user_id = patientEmergencyContactInfo.user_id
+                        return models.patient_medical_info.create(medicalInfo, { transaction });
+                    })
+                    .then((result) => {
+
+                        // successful creation of account
+                        res.status(201).json({
+                            success: true,
+                            message: "Account successfully added!",
+                        });
+
+                        transaction.commit();   /* commit all query made */
+                    })
+                    .catch((error) => {
+                        // checks if transaction was initialized
+                        if (transaction) {
+                            transaction.rollback(); /* rollback and return data that was submitted to database */
+                        }
+
+                        // unsuccessfully create account
+                        res.status(500).json({
+                            success: false,
+                            message: "Something went wrong.",
+                            error: error.message,
+                        });
+                    });
+            })
+        })
+
 
     } catch (error) {
         res.status(500).json({
@@ -173,6 +179,7 @@ async function getPatientInformation(req, res) {
 async function updatePersonalInformation(req, res) {
 
     try {
+
         const personalInfo = {
             user_id: req.body.user_id,
             firstname: req.body.firstname,
@@ -205,18 +212,25 @@ async function updateAccountInformation(req, res) {
 
     try {
 
-        const accountInfo = {
-            user_id: req.body.user_id,
-            username: req.body.username,
-            password: req.body.password
-        }
+        bycryptjs.genSalt(10, function (err, salt) {
+            bycryptjs.hash(req.body.password, salt, async function (err, hash) {
 
-        await models.sequelize.query("UPDATE patient_accounts SET username = '" + accountInfo.username + "', password='" + accountInfo.password + "' WHERE user_id='" + accountInfo.user_id + "'", { type: QueryTypes.UPDATE })
-
-        res.status(200).json({
-            success: true,
-            message: "Account information was updated successfully."
-        });
+                const accountInfo = {
+                    user_id: req.body.user_id,
+                    username: req.body.username,
+                    password: hash
+                }
+        
+                await models.sequelize.query("UPDATE patient_accounts SET username = '" + accountInfo.username + "', password='" + accountInfo.password + "' WHERE user_id='" + accountInfo.user_id + "'", { type: QueryTypes.UPDATE })
+        
+                res.status(200).json({
+                    success: true,
+                    message: "Account information was updated successfully."
+                });
+                
+            })
+        })
+        
 
     } catch (error) {
         res.status(500).json({
