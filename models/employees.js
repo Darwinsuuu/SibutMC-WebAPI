@@ -14,21 +14,32 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   employees.init({
-    staff_firstname: {
-      type: DataTypes.STRING,
+    firstname: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    staff_lastname:{
-      type: DataTypes.STRING,
+    middlename: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    lastname: {
+      type: DataTypes.TEXT,
       allowNull: false,
     },
-    staff_position:{
-      type: DataTypes.STRING,
+    position: {
+      type: DataTypes.TEXT,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 1
     }
   }, {
     sequelize,
     modelName: 'employees',
   });
+
   return employees;
+  
 };

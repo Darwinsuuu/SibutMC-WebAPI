@@ -1,7 +1,6 @@
 const { Sequelize, QueryTypes } = require('sequelize');
 const models = require('../models')
 const bycryptjs = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 // creating patient accounts using transactions
 function createPatient(req, res) {
