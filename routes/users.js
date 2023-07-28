@@ -11,5 +11,7 @@ router.put("/updateContactInfo", checkAuthMiddleware.checkAuth, usersController.
 router.put("/updateEmegencyContactInfo", checkAuthMiddleware.checkAuth, usersController.updateEmegencyContactInformation);
 router.put("/updateMedicalInfo", checkAuthMiddleware.checkAuth, usersController.updateMedicalInformation);
 router.get("/getPatientInfo/:id", checkAuthMiddleware.checkAuth, usersController.getPatientInformation);
+router.get("/getAllPatientInformation", checkAuthMiddleware.checkAuth, usersController.getAllPatientInformation);
+router.get("/getPatientMedicalInformation/:id", checkAuthMiddleware.checkAuth, usersController.getPatientMedicalInformation);
 
 module.exports = router;

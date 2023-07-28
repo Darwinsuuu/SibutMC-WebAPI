@@ -58,6 +58,39 @@ function sendOTPCreateAccount(req, res) {
 }
 
 
+
+function sendApproveAppointmentMessage(req, res) {
+
+    const patientInfo = {
+        fullname: req.body.fullname,
+        contact_no: req.body.contact_no,
+        date: req.body.date,
+        time: req.body.time
+    }
+
+    console.log(patientInfo)
+
+    const phoneNumber = patientInfo.contact_no; // Replace with the recipient's phone number
+    const message = "Good day, "+patientInfo.fullname+"! This is to inform you that your appointment is approved. Please go to Sibut Medicare, Barangay Health Center on "+patientInfo.date+", "+patientInfo.time+". Thank you and stay safe!.  \n\n" + msgFooter; // Replace with your message
+
+    sendSMS(phoneNumber, message)
+        .then(() => {
+            res.status(200).json({
+                success: true,
+                message: 'Message sent successfully!.',
+            });
+        })
+        .catch((error) => {
+            res.status(500).json({
+                success: false,
+                message: 'Failed to send message.',
+                error: error.message,
+            });
+        });
+}
+
+
+
 function sendDeclineAppointmentMessage(req, res) {
 
     const patientInfo = {
@@ -120,5 +153,6 @@ function sendNotificationMessage(req, res) {
 module.exports = {
     sendOTPCreateAccount: sendOTPCreateAccount,
     sendDeclineAppointmentMessage: sendDeclineAppointmentMessage,
-    sendNotificationMessage: sendNotificationMessage
+    sendNotificationMessage: sendNotificationMessage,
+    sendApproveAppointmentMessage: sendApproveAppointmentMessage
 }

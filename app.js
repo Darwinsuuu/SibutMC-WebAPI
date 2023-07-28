@@ -7,8 +7,9 @@ const app = express();
 const patientRoute = require('./routes/users');
 const semaphoreRoute = require('./routes/semaphore');
 const authRoute = require('./routes/auth');
-const appointmentRoute = require('./routes/appointment')
-const employeeRoute = require('./routes/employees')
+const appointmentRoute = require('./routes/appointment');
+const employeeRoute = require('./routes/employees');
+const dashboardRoute = require('./routes/dashboard');
 
 app.use(cors({
     origin: '*',
@@ -22,5 +23,6 @@ app.use('/api/semaphore', semaphoreRoute);
 app.use('/api/patient', patientRoute);
 app.use('/api/appointment', appointmentRoute);
 app.use('/api/employee', employeeRoute);
+app.use('/api/dashboard', dashboardRoute);
 
 module.exports = app;

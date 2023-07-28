@@ -102,6 +102,30 @@ function createPatient(req, res) {
 }
 
 
+async function getAllPatientInformation(req, res) {
+
+    try {
+
+        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id", { type: QueryTypes.SELECT });
+
+        res.status(200).json({
+            success: true,
+            message: result.length + " records found/",
+            result: result
+        });
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong.",
+            error: error.message,
+        });
+    }
+
+}
+
+
 async function getPatientInformation(req, res) {
 
     try {
@@ -219,17 +243,17 @@ async function updateAccountInformation(req, res) {
                     username: req.body.username,
                     password: hash
                 }
-        
+
                 await models.sequelize.query("UPDATE patient_accounts SET username = '" + accountInfo.username + "', password='" + accountInfo.password + "' WHERE user_id='" + accountInfo.user_id + "'", { type: QueryTypes.UPDATE })
-        
+
                 res.status(200).json({
                     success: true,
                     message: "Account information was updated successfully."
                 });
-                
+
             })
         })
-        
+
 
     } catch (error) {
         res.status(500).json({
@@ -331,6 +355,46 @@ async function updateMedicalInformation(req, res) {
 
 }
 
+
+
+
+
+async function getPatientMedicalInformation(req, res) {
+
+    try {
+        const userId = req.params.id;
+
+        const response = await models.sequelize.query("SELECT AR.id as appointment_record_id, AR.user_id, AR.appointed_date, AR.appointed_time, AR.status, AR.decline_reason, AR.createdAt AS appointment_record_date_created, MR.id AS medical_record_id, MR.medical_reason, MR.medical_description, MR.diagnosis, EMP.firstname AS physician, MR.createdAt as medical_record_date_created from appointment_records AS AR INNER JOIN medical_records AS MR ON MR.appointment_id = AR.id INNER JOIN employees AS EMP ON MR.physician = EMP.id WHERE AR.user_id = '"+userId+"' AND AR.status = '4'", { type: QueryTypes.SELECT });
+
+        if (response.length > 0) {
+
+            res.status(200).json({
+                success: true,
+                result: response
+            });
+
+        } else {
+            res.status(200).json({
+                success: false,
+                message: "No record found for " + userId + ". Please login again.",
+                result: response
+            });
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong.",
+            error: error.message,
+        });
+    }
+
+}
+
+
+
+
+
 module.exports = {
     createPatient: createPatient,
     getPatientInformation: getPatientInformation,
@@ -338,5 +402,7 @@ module.exports = {
     updateAccountInformation: updateAccountInformation,
     updateContactInformation: updateContactInformation,
     updateEmegencyContactInformation: updateEmegencyContactInformation,
-    updateMedicalInformation: updateMedicalInformation
+    updateMedicalInformation: updateMedicalInformation,
+    getAllPatientInformation: getAllPatientInformation,
+    getPatientMedicalInformation: getPatientMedicalInformation
 }

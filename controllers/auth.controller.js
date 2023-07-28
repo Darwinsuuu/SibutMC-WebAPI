@@ -23,42 +23,55 @@ async function userAuthPatient(req, res) {
 
             } else {
 
-                bycryptjs.compare(credentials.password, user.password, function (err, result) {
-                    if (result) {
-                        jwt.sign(
-                            {
-                                userId: user.user_id,
-                                username: user.username,
-                                fullname: user.firstname + " " + user.middlename + " " + user.lastname,
-                            },
-                            process.env.JWT_SECRET_KEY,
-                            function (err, token) {
-                                if (err) {
-                                    console.error("Error generating JWT:", err);
-                                    res.status(500).json({
-                                        success: false,
-                                        message: "Error generating JWT token"
-                                    });
-                                } else {
-                                    
-                                    console.log("Generated Token:", token);
-                                    res.status(200).json({
-                                        success: true,
-                                        message: "Authentication successful!",
-                                        userId: user.user_id,
-                                        userType: 3,
-                                        token: token
-                                    });
+                models.patient_personal_info.findOne({ where: { user_id: user.user_id } }).then(userInfo => {
+
+                    bycryptjs.compare(credentials.password, user.password, function (err, result) {
+                        if (result) {
+                            jwt.sign(
+                                {
+                                    userId: user.user_id,
+                                    username: user.username,
+                                    fullname: userInfo.firstname + " " + userInfo.middlename + " " + userInfo.lastname,
+                                },
+                                process.env.JWT_SECRET_KEY,
+                                function (err, token) {
+                                    if (err) {
+                                        console.error("Error generating JWT:", err);
+                                        res.status(500).json({
+                                            success: false,
+                                            message: "Error generating JWT token"
+                                        });
+                                    } else {
+                                        
+                                        res.status(200).json({
+                                            success: true,
+                                            message: "Authentication successful!",
+                                            userId: user.user_id,
+                                            userType: 3,                                    
+                                            fullname: userInfo.firstname,
+                                            token: token
+                                        });
+
+                                    }
                                 }
-                            }
-                        );
-                    } else {
-                        res.status(401).json({
-                            success: false,
-                            message: "Invalid credentials"
-                        });
-                    }
+                            );
+                        } else {
+                            res.status(401).json({
+                                success: false,
+                                message: "Invalid credentials"
+                            });
+                        }
+                    });
+
+                }).catch(error => {
+                    res.status(500).json({
+                        success: false,
+                        message: "Something went wrong.",
+                        error: error.message,
+                    });
                 });
+
+               
             }
 
         }).catch(error => {
@@ -122,6 +135,7 @@ async function userAuthStaff(req, res) {
                                         message: "Authentication successful!",
                                         userId: user.user_id,
                                         userType: 2,
+                                        fullname: 'staff',
                                         token: token
                                     });
                                 }
@@ -198,6 +212,7 @@ async function userAuthAdmin(req, res) {
                                         message: "Authentication successful!",
                                         userId: user.user_id,
                                         userType: 1,
+                                        fullname: 'admin',
                                         token: token
                                     });
                                 }
