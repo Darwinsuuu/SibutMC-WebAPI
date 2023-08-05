@@ -25,10 +25,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "fs": "^0.0.1-security",
     "full-icu": "^1.5.0",
     "jsonwebtoken": "^9.0.1",
     "mysql2": "^3.5.1",
     "nodemon": "^3.0.1",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^21.0.1",
     "sequelize": "^6.32.1",
     "uuid": "^9.0.0"
   }

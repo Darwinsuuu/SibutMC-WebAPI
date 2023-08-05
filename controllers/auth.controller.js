@@ -27,34 +27,56 @@ async function userAuthPatient(req, res) {
 
                     bycryptjs.compare(credentials.password, user.password, function (err, result) {
                         if (result) {
-                            jwt.sign(
-                                {
-                                    userId: user.user_id,
-                                    username: user.username,
-                                    fullname: userInfo.firstname + " " + userInfo.middlename + " " + userInfo.lastname,
-                                },
-                                process.env.JWT_SECRET_KEY,
-                                function (err, token) {
-                                    if (err) {
-                                        console.error("Error generating JWT:", err);
-                                        res.status(500).json({
-                                            success: false,
-                                            message: "Error generating JWT token"
-                                        });
-                                    } else {
-                                        
-                                        res.status(200).json({
-                                            success: true,
-                                            message: "Authentication successful!",
-                                            userId: user.user_id,
-                                            userType: 3,                                    
-                                            fullname: userInfo.firstname,
-                                            token: token
-                                        });
 
-                                    }
-                                }
-                            );
+                            const name = userInfo.firstname + " " + userInfo.middlename + " " + userInfo.lastname;
+
+                            const activityLog = {
+                                name: "Login to Patient",
+                                description: name.replace(/\b\w/g, (match) => match.toUpperCase()) + " has logged on in the patient account.",
+                                created_by: name.replace(/\b\w/g, (match) => match.toUpperCase())
+                            }
+
+                            models.activity_logs.create(activityLog)
+                                .then((result) => {
+                                    jwt.sign(
+                                        {
+                                            userId: user.user_id,
+                                            username: user.username,
+                                            fullname: userInfo.firstname + " " + userInfo.middlename + " " + userInfo.lastname,
+                                        },
+                                        process.env.JWT_SECRET_KEY,
+                                        function (err, token) {
+                                            if (err) {
+                                                console.error("Error generating JWT:", err);
+                                                res.status(500).json({
+                                                    success: false,
+                                                    message: "Error generating JWT token"
+                                                });
+                                            } else {
+
+                                                res.status(200).json({
+                                                    success: true,
+                                                    message: "Authentication successful!",
+                                                    userId: user.user_id,
+                                                    userType: 3,
+                                                    fullname: userInfo.firstname,
+                                                    token: token
+                                                });
+
+                                            }
+                                        }
+                                    );
+                                })
+                                .catch((error) => {
+                                    res.status(500).json({
+                                        success: false,
+                                        message: "Something went wrong.",
+                                        error: error.message,
+                                    });
+                                })
+
+
+
                         } else {
                             res.status(401).json({
                                 success: false,
@@ -71,7 +93,7 @@ async function userAuthPatient(req, res) {
                     });
                 });
 
-               
+
             }
 
         }).catch(error => {
@@ -116,31 +138,50 @@ async function userAuthStaff(req, res) {
 
                 bycryptjs.compare(credentials.password, user.password, function (err, result) {
                     if (result) {
-                        jwt.sign(
-                            {
-                                userId: user.user_id,
-                                username: user.username,
-                            },
-                            process.env.JWT_SECRET_KEY,
-                            function (err, token) {
-                                if (err) {
-                                    console.error("Error generating JWT:", err);
-                                    res.status(500).json({
-                                        success: false,
-                                        message: "Error generating JWT token"
-                                    });
-                                } else {
-                                    res.status(200).json({
-                                        success: true,
-                                        message: "Authentication successful!",
+
+                        const activityLog = {
+                            name: "Login to Staff",
+                            description: "Staff has logged on in the staff account.",
+                            created_by: "Staff"
+                        }
+
+                        models.activity_logs.create(activityLog)
+                            .then((result) => {
+                                jwt.sign(
+                                    {
                                         userId: user.user_id,
-                                        userType: 2,
-                                        fullname: 'staff',
-                                        token: token
-                                    });
-                                }
-                            }
-                        );
+                                        username: user.username,
+                                    },
+                                    process.env.JWT_SECRET_KEY,
+                                    function (err, token) {
+                                        if (err) {
+                                            console.error("Error generating JWT:", err);
+                                            res.status(500).json({
+                                                success: false,
+                                                message: "Error generating JWT token"
+                                            });
+                                        } else {
+                                            res.status(200).json({
+                                                success: true,
+                                                message: "Authentication successful!",
+                                                userId: user.user_id,
+                                                userType: 2,
+                                                fullname: 'staff',
+                                                token: token
+                                            });
+                                        }
+                                    }
+                                );
+                            })
+                            .catch((error) => {
+                                res.status(500).json({
+                                    success: false,
+                                    message: "Something went wrong.",
+                                    error: error.message,
+                                });
+                            })
+
+
                     } else {
                         res.status(401).json({
                             success: false,
@@ -193,31 +234,50 @@ async function userAuthAdmin(req, res) {
 
                 bycryptjs.compare(credentials.password, user.password, function (err, result) {
                     if (result) {
-                        jwt.sign(
-                            {
-                                userId: user.user_id,
-                                username: user.username,
-                            },
-                            process.env.JWT_SECRET_KEY,
-                            function (err, token) {
-                                if (err) {
-                                    console.error("Error generating JWT:", err);
-                                    res.status(500).json({
-                                        success: false,
-                                        message: "Error generating JWT token"
-                                    });
-                                } else {
-                                    res.status(200).json({
-                                        success: true,
-                                        message: "Authentication successful!",
+
+                        const activityLog = {
+                            name: "Login to Admin",
+                            description: "Admin has logged on in the admin account.",
+                            created_by: "Admin"
+                        }
+
+                        models.activity_logs.create(activityLog)
+                            .then((result) => {
+                                jwt.sign(
+                                    {
                                         userId: user.user_id,
-                                        userType: 1,
-                                        fullname: 'admin',
-                                        token: token
-                                    });
-                                }
-                            }
-                        );
+                                        username: user.username,
+                                    },
+                                    process.env.JWT_SECRET_KEY,
+                                    function (err, token) {
+                                        if (err) {
+                                            console.error("Error generating JWT:", err);
+                                            res.status(500).json({
+                                                success: false,
+                                                message: "Error generating JWT token"
+                                            });
+                                        } else {
+                                            res.status(200).json({
+                                                success: true,
+                                                message: "Authentication successful!",
+                                                userId: user.user_id,
+                                                userType: 1,
+                                                fullname: 'admin',
+                                                token: token
+                                            });
+                                        }
+                                    }
+                                );
+                            })
+                            .catch((error) => {
+                                res.status(500).json({
+                                    success: false,
+                                    message: "Something went wrong.",
+                                    error: error.message,
+                                });
+                            })
+
+
                     } else {
                         res.status(401).json({
                             success: false,

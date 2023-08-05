@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+    
+        *,
+        *::after,
+        *::before {
+            box-sizing: border-box;
+        }
+    
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        .container {
+            display: block;
+            position: relative;
+            border: 2px solid black;
+        }
+    
+        .wrapper {
+            padding: 25px 35px
+        }
+    
+        .hero {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin: 25px 0 10px;
+        }
+    
+        .hero-title h2,
+        .hero-title p {
+            margin: 0 0 5px;
+        }
+    
+        table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+    
+        table td,
+        table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+    
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+    
+        .table-title {
+            text-align: center;
+            background-color: #1b1b1b;
+            color: #fff;
+            padding: 15px;
+            font-size: 12px !important;
+        }
+    
+        .flex-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: 12px !important;
+        }
+    
+        .info-title {
+            font-weight: bold;
+            font-size: 8px;
+        }
+    
+        .patient-record {
+            margin: 80px 0 30px;
+        }
+
+        .record {
+            display: block;
+            position: relative;
+            border: 1px solid #BCBCBC;
+            border-radius: 5px;
+            padding: 25px 25px;
+            margin: 0 0 20px;
+        }
+
+        .flex-record {
+            display: flex;
+            flex: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .flex-appointment,
+        .flex-physician {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="hero">
+            <img src="https://lh3.googleusercontent.com/fife/AKsag4PGoHXNub_RBEBg1_70t9DzBO-hPBjcDhwAafpDfAEPLFRyd4Th-_I4DphHNvdF2pcX4O6PBy7aYUpEwq0Kf3G6bOTMLekwLBJCDCzLGdDUlEXKT9i13dr_fdG1SnndUMAq01PXGGcxDLxlG6I3Djsy6NHEPpxfEKXGAn1C4N9KXsIP9MrpTLJXxwQWFdqPOBRaGfdzWaJ0LfMiGZArSEVMhWkGK3QjD9Tm80NlpMRnMasslWpVecRJ5DW3UxXCfug2gxE7QjFyjlCPdG3kN8wKmGQOXNtZXy9qJH8YXAeJ1LjyOs6xMLyQtNB0VxumNg7j3A31QFfptYilQkmzJOYchJ_SCXaiQmKKaIkcgdAGGcuNNDka5x6vgFzw1Hk3F-gfW6g5meNAsQj2CSbMPRcwsNq_dLX6aUSknuFNuHxIW5gup5ShFk7BfH71sXdvaKKaZMGv2UO8U_RiwfC2STNJ5I3Z6GlDtLy1WNN3WlMoE23HxCuzxye0S-xe2ouIUrg5-ZR_3EJMam1xu1xRXJejvA_Fj0EAAppvunAjfmP7js3fxXU4BWaQWTUAEGO1PeurtmsdcP26B85liKsQsG06bJsO-HUeAP5rcaOGPUiWMQ2cyc45GaTjDp7f7JAtAqF87rq55V0nEk5EeJNTHaNyOQrvEVlW3w-vOn79eAe3D6ntnfwe6Mc_ztHtbnZKKX_6us-UCcAAYa3V8HLKY_MzH47qVIzWne1JpQc09aioLlhb8F_0lcH6701Geug-A3hRkxAoyQ_26vBIQaA2mSicnHOcp2jLUkL52f1CH7hA2rN_fsIWVlDOGmC_4_PYL8Xc0JXNb5IA-sxUemRNhb5EOWwkpRKqF-V09YwmJj_3OQgjOcX8tdTA4-LAO2Ucqxf7MlI5hwnLZGA_vzEPfMhUjzoUfQKV3m4qXa4PSbXpfu5Hu-bHaPQrMn284M5novnY16H600c-ADKta6c0dSDkYB2xcTaIgeES-3jCeLejy7WV1r3vppbDQ3MlZpUf02vvppmGcvErgWKMoPBL20jickR0fU7P2XJHHjvP1sMcEL8TyMMBgRo3Exl5aKkTL_t_OuozinjVXORNhonprrGeklIQMs6nbjy8pSuBrbMtjddk2fZ_ZsftxH7UvRVvzHg7VArO57YDyOImOMmAseSy8E7XIBUezwdmiwGzK8IXYJ4PqSLZp1upyfqi3MhxxQ9NAU-RSaXey7dqJmquJOlekWRPRwC0XCDr-Fb27lYLyu2Q6s25jKVGbYX8VHqH-0bhwcqeIO1wrplG2LkhcmY8oD6t2mTxXU6d_e0KwVLQlwBMvIQsOj08NhJRC6SHUP7qppUSt2G30Urc99OIRIEFtGyjcMayQjjA_TaGjJWUlCSkIamk7fEKqPQR1AalRe6rkdavX7WA4C4QOJbvKHcnxhBFoewOFMIBBeJXyKY4AhVTjf1fnq6PJ5s3tr8eTPIqzHgDaE2_KT1Dy6Xo8m7B44Q91Clve3BBHv9HBDjbh7VS-m2AY0sWjioZwixDJvTn5VDj=w3440-h1253"
+                width="120" alt="">
+
+            <div class="hero-title">
+                <h2>Barangay Medical Center</h2>
+                <p>Brgy. Sibut, San Jose, Nueva Ecija</p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+
+            <div class="personal-info-wrapper">
+                <table>
+                    <tr>
+                        <td colspan="4" class="table-title"><b>Personal Information</b></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Full Name</span>
+                                <span>Darwin Bulgado Labiste</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex-info">
+                                <span class="info-title">Gender</span>
+                                <span>Male</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex-info">
+                                <div class="flex-info">
+                                    <span class="info-title">Marital Status</span>
+                                    <span>Single</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="flex-info">
+                                <span class="info-title">Contact #</span>
+                                <span>09278285895</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex-info">
+                                <span class="info-title">Birthdate</span>
+                                <span>20/03/20000</span>
+                            </div>
+                        </td>
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Email Address</span>
+                                <span>personal.darwinlabiste@gmail.com</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div class="flex-info">
+                                <span class="info-title">Complete Address</span>
+                                <span>B18, L20, Elcano St., Villa Hermosa Subd., Buhay na Tubig, Imus, Cavite
+                                    4103</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="table-title"><b>Contact Incase of Emergency</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Full Name</span>
+                                <span>Carty King Paglinawan</span>
+                            </div>
+                        </td>
+
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Contact #</span>
+                                <span>09278285852</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="4" class="table-title"><b>Physical Information</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1">
+                            <div class="flex-info">
+                                <span class="info-title">Height</span>
+                                <span>173 cm</span>
+                            </div>
+                        </td>
+
+                        <td colspan="1">
+                            <div class="flex-info">
+                                <span class="info-title">Weight</span>
+                                <span>78 kg</span>
+                            </div>
+                        </td>
+
+                        <td colspan="1">
+                            <div class="flex-info">
+                                <span class="info-title">Blood Pressure</span>
+                                <span>-- Not yet set --</span>
+                            </div>
+                        </td>
+
+                        <td colspan="1">
+                            <div class="flex-info">
+                                <span class="info-title">Blood Type</span>
+                                <span>-- Not yet set --</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Disability</span>
+                                <span>None</span>
+                            </div>
+                        </td>
+                        <td colspan="2">
+                            <div class="flex-info">
+                                <span class="info-title">Contagious Disease</span>
+                                <span>None</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="patient-record">
+                <center>
+                    <h2>Patient Records</h2>
+                </center>
+
+                <div class="record">
+
+                    <div class="flex-record">
+                        <div class="flex-appointment">
+                            <span style="font-weight: bold;">Appointment:</span>
+                            <span>August 05, 2023 1:23 PM</span>
+                        </div>
+    
+                        <div class="flex-physician">
+                            <span style="font-weight: bold;">Physician:</span>
+                            <span>Jade Padua</span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <span style="font-weight: bold;">Medical Reason:</span>
+                    <span style="margin: 0;">Lorem Ipsum</span>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Medical Description:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae incidunt tempore facere sint cum nam.</p>
+
+                    <br>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Diagnosis:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quaerat deserunt magni tempore impedit, quibusdam dolorem maxime a omnis fugit blanditiis delectus, nobis iste consequuntur!</p>
+
+                </div>
+
+                <div class="record">
+
+                    <div class="flex-record">
+                        <div class="flex-appointment">
+                            <span style="font-weight: bold;">Appointment:</span>
+                            <span>August 05, 2023 1:23 PM</span>
+                        </div>
+    
+                        <div class="flex-physician">
+                            <span style="font-weight: bold;">Physician:</span>
+                            <span>Jade Padua</span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <span style="font-weight: bold;">Medical Reason:</span>
+                    <span style="margin: 0;">Lorem Ipsum</span>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Medical Description:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae incidunt tempore facere sint cum nam.</p>
+
+                    <br>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Diagnosis:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quaerat deserunt magni tempore impedit, quibusdam dolorem maxime a omnis fugit blanditiis delectus, nobis iste consequuntur!</p>
+
+                </div>
+
+                <div class="record">
+
+                    <div class="flex-record">
+                        <div class="flex-appointment">
+                            <span style="font-weight: bold;">Appointment:</span>
+                            <span>August 05, 2023 1:23 PM</span>
+                        </div>
+    
+                        <div class="flex-physician">
+                            <span style="font-weight: bold;">Physician:</span>
+                            <span>Jade Padua</span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <span style="font-weight: bold;">Medical Reason:</span>
+                    <span style="margin: 0;">Lorem Ipsum</span>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Medical Description:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae incidunt tempore facere sint cum nam.</p>
+
+                    <br>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Diagnosis:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quaerat deserunt magni tempore impedit, quibusdam dolorem maxime a omnis fugit blanditiis delectus, nobis iste consequuntur!</p>
+
+                </div>
+
+                <div class="record">
+
+                    <div class="flex-record">
+                        <div class="flex-appointment">
+                            <span style="font-weight: bold;">Appointment:</span>
+                            <span>August 05, 2023 1:23 PM</span>
+                        </div>
+    
+                        <div class="flex-physician">
+                            <span style="font-weight: bold;">Physician:</span>
+                            <span>Jade Padua</span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <span style="font-weight: bold;">Medical Reason:</span>
+                    <span style="margin: 0;">Lorem Ipsum</span>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Medical Description:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae incidunt tempore facere sint cum nam.</p>
+
+                    <br>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Diagnosis:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quaerat deserunt magni tempore impedit, quibusdam dolorem maxime a omnis fugit blanditiis delectus, nobis iste consequuntur!</p>
+
+                </div>
+
+                <div class="record">
+
+                    <div class="flex-record">
+                        <div class="flex-appointment">
+                            <span style="font-weight: bold;">Appointment:</span>
+                            <span>August 05, 2023 1:23 PM</span>
+                        </div>
+    
+                        <div class="flex-physician">
+                            <span style="font-weight: bold;">Physician:</span>
+                            <span>Jade Padua</span>
+                        </div>
+                    </div>
+
+                    <br>
+                    <span style="font-weight: bold;">Medical Reason:</span>
+                    <span style="margin: 0;">Lorem Ipsum</span>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Medical Description:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae incidunt tempore facere sint cum nam.</p>
+
+                    <br>
+
+                    <p style="font-weight: bold; margin: 10px 0 5px;">Diagnosis:</p>
+                    <p style="margin: 0 0 0">Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero quaerat deserunt magni tempore impedit, quibusdam dolorem maxime a omnis fugit blanditiis delectus, nobis iste consequuntur!</p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

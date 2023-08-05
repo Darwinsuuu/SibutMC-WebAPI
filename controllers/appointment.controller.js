@@ -6,6 +6,8 @@ function createAppointment(req, res) {
 
     try {
 
+
+
         const appointmentData = {
             user_id: req.body.user_id,
             appointed_date: req.body.appointment_date,
@@ -29,13 +31,27 @@ function createAppointment(req, res) {
             }).then((createdAppointment) => {
                 medicalData.appointment_id = createdAppointment.id;
                 return models.medical_records.create(medicalData, { transaction });
-            }).then((result) => {
+            }).then(async (medicalRecord) => {
+
+                const patientData = await models.patient_personal_info.findOne({ where: { user_id: appointmentData.user_id } });
+
+                const name = patientData.firstname + ' ' + patientData.middlename + ' ' + patientData.lastname;
+
+                const activityLog = {
+                    name: "New Appointment",
+                    description: name.replace(/\b\w/g, (match) => match.toUpperCase()) + " has created an appointment.",
+                    created_by: name.replace(/\b\w/g, (match) => match.toUpperCase())
+                }
+
+                models.activity_logs.create(activityLog)
+
                 res.status(201).json({
                     success: true,
                     message: "Appointment successully submitted! Please wait for a SMS if appointment the time of your schedule after it is approved.",
                 });
 
                 transaction.commit();
+
             }).catch((error) => {
                 // checks if transaction was initialized
                 if (transaction) {
@@ -87,13 +103,26 @@ async function completeAppointment(req, res) {
 
     try {
 
-        await models.sequelize.query("UPDATE appointment_records SET status = 4 WHERE id ='"+req.body.appointmentId+"'", { type: QueryTypes.UPDATE });
+        
+        await models.sequelize.query("UPDATE medical_records SET diagnosis = '"+req.body.diagnosis+"' WHERE appointment_id = '"+req.body.appointmentId+"'", { type: QueryTypes.UPDATE })
+        await models.sequelize.query("UPDATE appointment_records SET status = 4 WHERE id ='" + req.body.appointmentId + "'", { type: QueryTypes.UPDATE });
+
+        const name = req.body.patientName.replace(/\b\w/g, (match) => match.toUpperCase());
+
+        const activityLog = {
+            name: "Appointment Completed",
+            description: "Appointment is complete for " + name + ".",
+            created_by: req.body.userRole
+        }
+
+        models.activity_logs.create(activityLog)
+
 
         res.status(201).json({
             success: true,
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
@@ -108,14 +137,23 @@ async function approveAppointment(req, res) {
 
     try {
 
-        await models.sequelize.query("UPDATE appointment_records SET status = 2, appointed_time='"+req.body.time+"' WHERE id ='"+req.body.appointmentId+"'", { type: QueryTypes.UPDATE });
-        await models.sequelize.query("UPDATE medical_records SET physician = '"+req.body.physician+"' WHERE appointment_id = '"+req.body.appointmentId+"'", { type: QueryTypes.UPDATE });
+        const name = req.body.patientName;
+
+        const activityLog = {
+            name: "Appointment Approved",
+            description: "Appointment was approved for " + name,
+            created_by: req.body.userRole
+        }
+
+        models.activity_logs.create(activityLog)
+        await models.sequelize.query("UPDATE appointment_records SET status = 2, appointed_time='" + req.body.time + "' WHERE id ='" + req.body.appointmentId + "'", { type: QueryTypes.UPDATE });
+        await models.sequelize.query("UPDATE medical_records SET physician = '" + req.body.physician + "' WHERE appointment_id = '" + req.body.appointmentId + "'", { type: QueryTypes.UPDATE });
 
         res.status(201).json({
             success: true,
         });
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
@@ -130,9 +168,19 @@ async function declineAppointment(req, res) {
 
     try {
 
-        await models.sequelize.query("UPDATE appointment_records SET status = 3, decline_reason='"+req.body.reason+"' WHERE id = '"+req.body.id+"'", { type: QueryTypes.UPDATE })
+        const name = req.body.patientName;
 
-    } catch(error) {
+        const activityLog = {
+            name: "Appointment Declined",
+            description: "Appointment was decline for " + name + ". Reason: " + req.body.reason + ".",
+            created_by: req.body.userRole
+        }
+
+        models.activity_logs.create(activityLog)
+
+        await models.sequelize.query("UPDATE appointment_records SET status = 3, decline_reason='" + req.body.reason + "' WHERE id = '" + req.body.id + "'", { type: QueryTypes.UPDATE })
+
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: "Something went wrong.",
@@ -141,6 +189,20 @@ async function declineAppointment(req, res) {
     }
 }
 
+
+async function notifyPatientAppointment(req, res) {
+
+    const name = req.body.patientName;
+
+    const activityLog = {
+        name: "Appointment Reminded",
+        description: "SMS was sent to "+name+" to remind his/her appointment.",
+        created_by: req.body.userRole
+    }
+
+    models.activity_logs.create(activityLog)
+
+}
 
 async function getAllAppointments(req, res) {
     try {
@@ -169,4 +231,5 @@ module.exports = {
     completeAppointment: completeAppointment,
     approveAppointment: approveAppointment,
     declineAppointment: declineAppointment,
+    notifyPatientAppointment: notifyPatientAppointment
 }

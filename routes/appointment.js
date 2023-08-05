@@ -9,6 +9,7 @@ router.get("/getAllAppointmentsByPatient/:id", checkAuthMiddleware.checkAuth, ap
 router.get("/getAllAppointments", checkAuthMiddleware.checkAuth, appointmentController.getAllAppointments);
 router.post("/completeAppointment", checkAuthMiddleware.checkAuth, appointmentController.completeAppointment);
 router.post("/approveAppointment", checkAuthMiddleware.checkAuth, appointmentController.approveAppointment);
+router.post("/notifyPatientAppointment", checkAuthMiddleware.checkAuth, appointmentController.notifyPatientAppointment);
 router.post("/declineAppointment", checkAuthMiddleware.checkAuth, appointmentController.declineAppointment);
 
 module.exports = router;
