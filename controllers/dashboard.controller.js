@@ -48,8 +48,31 @@ async function getDashboard(req, res) {
 
 }
 
+async function getActivityLog(req, res) {
+
+    
+    try {
+        
+        const response = await models.sequelize.query("SELECT * FROM activity_logs", { type: QueryTypes.SELECT })
+
+        res.status(200).json({
+            success: true,
+            result: response
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong.",
+            error: error.message,
+        })
+    }
+
+}
+
 
 
 module.exports = {
-    getDashboard: getDashboard
+    getDashboard: getDashboard,
+    getActivityLog: getActivityLog
 }
