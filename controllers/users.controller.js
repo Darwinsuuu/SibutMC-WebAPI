@@ -28,7 +28,10 @@ function createPatient(req, res) {
                     marital_status: req.body.personalInfo.marital_status,
                     contact_no: req.body.contactInfo.contact_no,
                     email: req.body.contactInfo.email,
-                    address: req.body.contactInfo.address,
+                    region: req.body.addressInfo.region,
+                    province: req.body.addressInfo.province,
+                    cityMun: req.body.addressInfo.cityMun,
+                    barangay: req.body.addressInfo.barangay,
                 };
 
                 // patient emergency contact info from request body
@@ -171,7 +174,9 @@ async function getAllPatientInformation(req, res) {
 
     try {
 
-        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id", { type: QueryTypes.SELECT });
+        // const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id", { type: QueryTypes.SELECT });
+
+        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.region, PPI.province, PPI.cityMun, PPI.barangay, CONCAT(RB.brgyDesc,', ', RCM.citymunDesc,', ', RP.provDesc, ', ', RR.regDesc) as address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id INNER JOIN refregion RR ON RR.regCode = PPI.region INNER JOIN refprovince RP ON RP.provCode = PPI.province INNER JOIN refcitymun RCM ON RCM.citymunCode = PPI.cityMun INNER JOIN refbrgy RB ON RB.brgyCode = PPI.barangay", { type: QueryTypes.SELECT });
 
         res.status(200).json({
             success: true,
@@ -196,7 +201,7 @@ async function getPatientInformation(req, res) {
     try {
         const userId = req.params.id;
 
-        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id WHERE PA.user_id = '" + userId + "'", { type: QueryTypes.SELECT });
+        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.region, PPI.province, PPI.cityMun, PPI.barangay, CONCAT(RB.brgyDesc,', ', RCM.citymunDesc,', ', RP.provDesc, ', ', RR.regDesc) as address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id INNER JOIN refregion RR ON RR.regCode = PPI.region INNER JOIN refprovince RP ON RP.provCode = PPI.province INNER JOIN refcitymun RCM ON RCM.citymunCode = PPI.cityMun INNER JOIN refbrgy RB ON RB.brgyCode = PPI.barangay WHERE PA.user_id = '" + userId + "'", { type: QueryTypes.SELECT });
 
         if (result.length > 0) {
 
@@ -216,7 +221,11 @@ async function getPatientInformation(req, res) {
                     "PPI_id": result[0].PPI_id,
                     "contact_no": result[0].contact_no,
                     "email": result[0].email,
-                    "address": result[0].address,
+                    "region": result[0].region,
+                    "province": result[0].province,
+                    "cityMun": result[0].cityMun,
+                    "barangay": result[0].barangay,
+                    "address": result[0].address
                 },
                 emergencyContactInfo: {
                     "user_id": result[0].user_id,
@@ -360,6 +369,8 @@ async function updateContactInformation(req, res) {
 }
 
 
+
+
 async function updateEmegencyContactInformation(req, res) {
     try {
 
@@ -369,7 +380,28 @@ async function updateEmegencyContactInformation(req, res) {
             emergency_contact_no: req.body.emergency_contact_no,
         }
 
-        await models.sequelize.query("UPDATE patient_emergency_contact_infos SET contacT_fullname='" + emegencyContactInfo.fullname + "', contact_no='" + emegencyContactInfo.emergency_contact_no + "' WHERE user_id='" + emegencyContactInfo.user_id + "'", { type: QueryTypes.UPDATE })
+        await models.sequelize.query("UPDATE patient_emergency_contact_infos SET contact_fullname='" + emegencyContactInfo.fullname + "', contact_no='" + emegencyContactInfo.emergency_contact_no + "' WHERE user_id='" + emegencyContactInfo.user_id + "'", { type: QueryTypes.UPDATE })
+
+        res.status(200).json({
+            success: true,
+            message: "Emergency contact information was updated successfully."
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong.",
+            error: error.message
+        })
+    }
+}
+
+async function updateAddressInfo(req, res) {
+    try {
+
+        console.log(req.body)
+
+        await models.sequelize.query(`UPDATE patient_personal_infos SET region='${req.body.region}', province='${req.body.province}', cityMun='${req.body.cityMun}', barangay='${req.body.barangay}' WHERE user_id='${req.body.user_id}'`, { type: QueryTypes.UPDATE })
 
         res.status(200).json({
             success: true,
@@ -461,7 +493,7 @@ async function printPatientMedicalRecord(req, res) {
 
         const userId = req.body.user_id;
 
-        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id WHERE PA.user_id = '" + userId + "'", { type: QueryTypes.SELECT });
+        const result = await models.sequelize.query("SELECT PA.user_id, PA.username, PA.password, PPI.id as PPI_id, PPI.firstname, PPI.middlename, PPI.lastname, PPI.marital_status, PPI.gender, PPI.birthdate, PPI.contact_no, PPI.email, PPI.region, PPI.province, PPI.cityMun, PPI.barangay, CONCAT(RB.brgyDesc,', ', RCM.citymunDesc,', ', RP.provDesc, ', ', RR.regDesc) as address, PECI.id as PECI_id, PECI.contact_fullname, PECI.contact_no as emegency_contact_no, PMI.id as PMI_id, PMI.disability, PMI.contagious_disease, PMI.height, PMI.weight, PMI.blood_pressure, PMI.blood_type FROM patient_accounts AS PA INNER JOIN patient_personal_infos AS PPI ON PA.user_id = PPI.user_id INNER JOIN patient_emergency_contact_infos AS PECI ON PPI.user_id = PECI.user_id INNER JOIN patient_medical_infos as PMI ON PECI.user_id = PMI.user_id INNER JOIN refregion RR ON RR.regCode = PPI.region INNER JOIN refprovince RP ON RP.provCode = PPI.province INNER JOIN refcitymun RCM ON RCM.citymunCode = PPI.cityMun INNER JOIN refbrgy RB ON RB.brgyCode = PPI.barangay WHERE PA.user_id = '" + userId + "'", { type: QueryTypes.SELECT });
 
         const output = result[0];
 
@@ -790,6 +822,19 @@ async function printPatientMedicalRecord(req, res) {
             </html>
         `;
 
+
+        const currentDate = new Date();
+
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const dateFormat = new Intl.DateTimeFormat('en-US', options);
+
+        const formattedDate = dateFormat.format(currentDate);
+
+        const footerTemplate = `<div style="margin: 0 auto; text-align: center; font-size: 10px;">
+                                    Date Generated: ${formattedDate} 
+                                </div>
+                               `;
+
         await page.setContent(htmlContent);
 
         // // Generate PDF
@@ -798,8 +843,10 @@ async function printPatientMedicalRecord(req, res) {
             printBackground: true,
             margin: {
                 top: '25px',
-                bottom: '25px'
-            }
+                bottom: '35px'
+            },
+            displayHeaderFooter: true,
+            footerTemplate: footerTemplate,
         });
 
         await browser.close();
@@ -827,5 +874,6 @@ module.exports = {
     getPatientMedicalInformation: getPatientMedicalInformation,
     getUserInfoByContact: getUserInfoByContact,
     getUserUpdatePassword: getUserUpdatePassword,
-    printPatientMedicalRecord: printPatientMedicalRecord
+    printPatientMedicalRecord: printPatientMedicalRecord,
+    updateAddressInfo: updateAddressInfo
 }

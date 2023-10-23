@@ -45,7 +45,19 @@ module.exports = {
         type: Sequelize.STRING(255),
         allowNull: false
       },
-      address: {
+      region: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      province: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      cityMun: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      barangay: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

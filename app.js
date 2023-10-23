@@ -10,6 +10,7 @@ const authRoute = require('./routes/auth');
 const appointmentRoute = require('./routes/appointment');
 const employeeRoute = require('./routes/employees');
 const dashboardRoute = require('./routes/dashboard');
+const locationRoute = require('./routes/location');
 
 app.use(cors({
     origin: '*',
@@ -24,5 +25,6 @@ app.use('/api/patient', patientRoute);
 app.use('/api/appointment', appointmentRoute);
 app.use('/api/employee', employeeRoute);
 app.use('/api/dashboard', dashboardRoute);
+app.use('/api/location', locationRoute);
 
 module.exports = app;
